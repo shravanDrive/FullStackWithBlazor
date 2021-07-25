@@ -57,5 +57,16 @@ namespace Services.PropertyLookup.Controllers
 
             concepts.VirtualWithAbstract();
         }
+
+        /// <summary>
+        /// Trying Caching works or not
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Caching")]
+        public async Task<string> CacheTrial()
+        {
+           return await this.propertyLookupService.CacheTrial();
+        }
     }
 }

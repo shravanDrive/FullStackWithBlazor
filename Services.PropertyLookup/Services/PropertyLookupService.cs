@@ -1,8 +1,10 @@
 ﻿using Common.Repositories.DataAccess;
+using Connectors.RedisCache;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Services.PropertyLookup.Models;
 using Services.PropertyLookup.Repositories;
 using System;
@@ -29,23 +31,38 @@ namespace Services.PropertyLookup.Services
         /// </summary>
         private IRepositoryBase<SampleTable> repositoryBase;
 
+        /// <summary>
+        /// repositoryMyModel
+        /// </summary>
         private IRepositoryBase<MyModel> repositoryMyModel;
 
+        /// <summary>
+        /// opModel
+        /// </summary>
         private IRepositoryBase<OpParameterModel> opModel;
 
         /// <summary>
-        /// Constructor for intantiation
+        /// Cache
+        /// </summary>
+        private ICacheHelper Cache;
+
+        /// <summary>
+        /// PropertyLookupService
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="configuration"></param>
         /// <param name="repositoryBase"></param>
-        public PropertyLookupService(ILogger<PropertyLookupService> logger, IConfiguration configuration, IRepositoryBase<SampleTable> repositoryBase, IRepositoryBase<MyModel> repositoryMyModel, IRepositoryBase<OpParameterModel> opModel)
+        /// <param name="repositoryMyModel"></param>
+        /// <param name="opModel"></param>
+        /// <param name="Cache"></param>
+        public PropertyLookupService(ILogger<PropertyLookupService> logger, IConfiguration configuration, IRepositoryBase<SampleTable> repositoryBase, IRepositoryBase<MyModel> repositoryMyModel, IRepositoryBase<OpParameterModel> opModel, ICacheHelper Cache)
         {
             this.logger = logger;
             this.configuration = configuration;
             this.repositoryBase = repositoryBase;
             this.repositoryMyModel = repositoryMyModel;
             this.opModel = opModel;
+            this.Cache = Cache;
         }
 
         /// <summary>
@@ -61,6 +78,25 @@ namespace Services.PropertyLookup.Services
                 //return await this.repositoryBase.GetByIdAsync(1).ConfigureAwait(false);
                 var data = await this.repositoryBase.GetByConditionAsync(item => item.Id == 1).ConfigureAwait(false);
             return data.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// CacheTrial
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> CacheTrial()
+        {
+            SampleTable sampleTable = new SampleTable();
+            
+            sampleTable.Id = 1;
+            sampleTable.Msg = "caching";
+
+            string uniqueKey = Guid.NewGuid().ToString();
+            await this.Cache.SetValueAsync<SampleTable>(CacheScheme.Order, uniqueKey, sampleTable, 30).ConfigureAwait(false);
+
+            SampleTable sampleCachetable = await this.Cache.ReadValueAsync<SampleTable>(CacheScheme.Order, uniqueKey).ConfigureAwait(false);
+            string returnValue = JsonConvert.SerializeObject(sampleCachetable);
+            return returnValue;
         }
     }
 }

@@ -13,5 +13,11 @@ namespace Services.PropertyLookup.Services
         /// </summary>
         /// <returns></returns>
         Task<SampleTable> GetData();
+
+        /// <summary>
+        /// CacheTrial
+        /// </summary>
+        /// <returns></returns>
+        Task<string> CacheTrial();
     }
 }

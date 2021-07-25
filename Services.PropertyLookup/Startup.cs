@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Services.PropertyLookup.Services;
 using Services.PropertyLookup.Controllers;
 using Services.Common.ExceptionFilter;
+using Connectors.RedisCache;
 
 namespace Services.PropertyLookup
 {
@@ -122,6 +123,7 @@ namespace Services.PropertyLookup
         public static IServiceCollection AddCustomIntegrations(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
+                .AddSingleton<ICacheHelper, MemoryCacheHelper>()
                 .AddScoped<IPropertyLookupService, PropertyLookupService>();
             return services;
         }

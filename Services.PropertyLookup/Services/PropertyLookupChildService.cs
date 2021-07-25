@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Services.PropertyLookup.Services
 {
-    public class PropertyLookupChildService: IPropertyLookupService
+    public class PropertyLookupChildService
     {
         private readonly ILogger<PropertyLookupChildService> logger;
 
