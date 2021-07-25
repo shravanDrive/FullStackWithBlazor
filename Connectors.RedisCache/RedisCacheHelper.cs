@@ -6,14 +6,19 @@ namespace Connectors.RedisCache
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Text;
     using System.Threading.Tasks;
+    using Common.Configuration;
     using Microsoft.Extensions.Configuration;
+    using Newtonsoft.Json;
     using StackExchange.Redis;
 
     /// <summary>
     /// RedisCacheHelper
     /// </summary>
+    [ExcludeFromCodeCoverage]
+    [Serializable]
     public class RedisCacheHelper : ICacheHelper
     {
 
@@ -40,14 +45,99 @@ namespace Connectors.RedisCache
             connectionString = config.GetConfigValue<string>("RedisCache");
         }
 
-        public Task<T> ReadValueAsync<T>(CacheScheme schema, string key)
+        /// <summary>
+        /// Gets the Connection
+        /// </summary>
+        private static ConnectionMultiplexer Connection => LazyConnection.Value;
+
+        /// <summary>
+        /// ReadValueAsync
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="schema"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public async Task<T> ReadValueAsync<T>(CacheScheme schema, string key)
         {
-            throw new NotImplementedException();
+            T result = default(T);
+            string json = await ReadValueAsync(schema, key).ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(json))
+            {
+                result = Deserialize<T>(json);
+            }
+
+            return result;
         }
 
-        public Task SetValueAsync<T>(CacheScheme schema, string key, T value, int expiryTimeoutMinutes)
+        /// <summary>
+        /// SetValueAsync
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="schema"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="expiryTimeoutMinutes"></param>
+        /// <returns></returns>
+        public async Task SetValueAsync<T>(CacheScheme schema, string key, T value, int expiryTimeoutMinutes)
         {
-            throw new NotImplementedException();
+            string finalKey = BuildKey(schema, key);
+            IDatabase cache = Connection.GetDatabase();
+            await cache.StringSetAsync(finalKey, Serialize(value), new TimeSpan(0, 0, expiryTimeoutMinutes, 0)).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// ReadValueAync
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        private static async Task<string> ReadValueAsync(CacheScheme schema, string key)
+        {
+            // builds up a proper key and gets a reference to the correct Redis database.
+            IDatabase cache = Connection.GetDatabase();
+
+            key = schema + ":" + key;
+
+            RedisValue value = await cache.StringGetAsync(key).ConfigureAwait(false);
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Deserialize Object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="valueString"></param>
+        /// <returns></returns>
+        private static T Deserialize<T>(string valueString)
+        {
+            return JsonConvert.DeserializeObject<T>(valueString);
+        }
+
+        /// <summary>
+        /// Serialize
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static string Serialize(object value)
+        {
+            return JsonConvert.SerializeObject(value);
+        }
+
+        /// <summary>
+        /// BuildKey
+        /// </summary>
+        /// <param name="scheme"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        private static string BuildKey(CacheScheme schema, string key)
+        {
+            return schema + ":" + key;
         }
     }
 }
