@@ -32,7 +32,7 @@ namespace Connectors.RedisCache
         private static string connectionString;
 
         /// <summary>
-        /// RedisCacheHelper
+        /// RedisCacheHelper Pushing Code
         /// </summary>
         /// <param name="config"></param>
         public RedisCacheHelper(IConfiguration config)
