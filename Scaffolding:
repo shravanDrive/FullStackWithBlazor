@@ -1,2 +1,0 @@
-Scaffolding:
-Scaffold-DbContext "Server=serverName;Database=DataBaseName;User ID=sa;Password=123!@#abc;"Microsoft.EntityFrameworkCore.SqlServer -OutputDir FolderName/SubFolder -schema Location -DataAnnotations -Force
