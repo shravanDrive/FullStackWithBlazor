@@ -1,0 +1,1 @@
+Didnt get Microsoft.AspNetCore.Blazor.HttpClient for blazor project
