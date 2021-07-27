@@ -1,0 +1,6 @@
+Scaffolding Working:
+Scaffold-DbContext "Server=serverName;Database=DataBaseName;User ID=sa;Password=123!@#abc;"Microsoft.EntityFrameworkCore.SqlServer -OutputDir FolderName/SubFolder -schema Location -DataAnnotations -Force
+
+
+Without user id
+Scaffold-DbContext "Server=servername;Database=databasename;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Foldername/SubFoldername -schema order-DataAnnotations -Force
