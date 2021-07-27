@@ -1,0 +1,26 @@
+﻿@page "/TestBlazorise"
+
+    <Row>
+        <Column>
+            <CardHeader Margin="Margin.Is4.OnY">
+                <CardHeader>
+                    <CardTitle>Testing Blazorize Framework</CardTitle>
+                </CardHeader>
+                <CardBody>
+                    @*Code For Spinner*@
+                    @*<div class="text-center" style="vertical-align:middle">
+                        <div class="spinner-border text-primary" rolse="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>*@
+                    <FieldLabel ColumnSize="ColumnSize.Is12.OnDesktop">
+                        <FieldLabel>Testing Blazorise</FieldLabel>
+                        <TextEdit ChangeTextOnKeyPress="false" @bind-Text="dataforTextBox" />
+                    </FieldLabel>
+                </CardBody>
+            </CardHeader>
+        </Column>
+    </Row>
+    @code {
+        string dataforTextBox = "Shravan";
+    }

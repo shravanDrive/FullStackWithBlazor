@@ -19,6 +19,8 @@ using Services.PropertyLookup.Services;
 using Services.PropertyLookup.Controllers;
 using Services.Common.ExceptionFilter;
 using Connectors.RedisCache;
+using Microsoft.AspNetCore.SignalR;
+using Connector.SignalR;
 
 namespace Services.PropertyLookup
 {
@@ -125,6 +127,8 @@ namespace Services.PropertyLookup
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
                 .AddSingleton<ICacheHelper, MemoryCacheHelper>()
                 .AddScoped<IPropertyLookupService, PropertyLookupService>();
+
+            services.AddSignalR();
             return services;
         }
 

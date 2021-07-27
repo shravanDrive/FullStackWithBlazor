@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common.Repositories\Common.Repositories.csproj" />
+    <ProjectReference Include="..\Connector.SignalR\Connector.SignalR.csproj" />
     <ProjectReference Include="..\Connectors.RedisCache\Connectors.RedisCache.csproj" />
     <ProjectReference Include="..\Services.Common\Services.Common.csproj" />
   </ItemGroup>

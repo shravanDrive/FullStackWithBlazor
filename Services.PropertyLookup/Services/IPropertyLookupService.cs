@@ -19,5 +19,11 @@ namespace Services.PropertyLookup.Services
         /// </summary>
         /// <returns></returns>
         Task<string> CacheTrial();
+
+        /// <summary>
+        /// SignalR
+        /// </summary>
+        /// <returns></returns>
+        Task SignalR();
     }
 }

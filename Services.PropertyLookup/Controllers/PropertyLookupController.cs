@@ -68,5 +68,16 @@ namespace Services.PropertyLookup.Controllers
         {
            return await this.propertyLookupService.CacheTrial();
         }
+
+        /// <summary>
+        /// TryingSignalR
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("TryingSignalR")]
+        public async Task TryingSignalR()
+        {
+            await this.propertyLookupService.SignalR().ConfigureAwait(false);
+        }
     }
 }

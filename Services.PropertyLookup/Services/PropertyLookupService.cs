@@ -1,5 +1,7 @@
 ﻿using Common.Repositories.DataAccess;
+using Connector.SignalR;
 using Connectors.RedisCache;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +34,11 @@ namespace Services.PropertyLookup.Services
         private IRepositoryBase<SampleTable> repositoryBase;
 
         /// <summary>
+        /// WorkEventHubContext
+        /// </summary>
+        private IHubContext<WorkEventHub> workEventHubContext;
+
+        /// <summary>
         /// repositoryMyModel
         /// </summary>
         private IRepositoryBase<MyModel> repositoryMyModel;
@@ -55,7 +62,8 @@ namespace Services.PropertyLookup.Services
         /// <param name="repositoryMyModel"></param>
         /// <param name="opModel"></param>
         /// <param name="Cache"></param>
-        public PropertyLookupService(ILogger<PropertyLookupService> logger, IConfiguration configuration, IRepositoryBase<SampleTable> repositoryBase, IRepositoryBase<MyModel> repositoryMyModel, IRepositoryBase<OpParameterModel> opModel, ICacheHelper Cache)
+        /// <param name="workEventHubContext"></param>
+        public PropertyLookupService(ILogger<PropertyLookupService> logger, IConfiguration configuration, IRepositoryBase<SampleTable> repositoryBase, IRepositoryBase<MyModel> repositoryMyModel, IRepositoryBase<OpParameterModel> opModel, ICacheHelper Cache, IHubContext<WorkEventHub> workEventHubContext)
         {
             this.logger = logger;
             this.configuration = configuration;
@@ -63,6 +71,7 @@ namespace Services.PropertyLookup.Services
             this.repositoryMyModel = repositoryMyModel;
             this.opModel = opModel;
             this.Cache = Cache;
+            this.workEventHubContext = workEventHubContext;
         }
 
         /// <summary>
@@ -97,6 +106,15 @@ namespace Services.PropertyLookup.Services
             SampleTable sampleCachetable = await this.Cache.ReadValueAsync<SampleTable>(CacheScheme.Order, uniqueKey).ConfigureAwait(false);
             string returnValue = JsonConvert.SerializeObject(sampleCachetable);
             return returnValue;
+        }
+
+        /// <summary>
+        /// SignalR
+        /// </summary>
+        /// <returns></returns>
+        public async Task SignalR()
+        {
+            await this.workEventHubContext.Clients.All.SendAsync("InvokeMethod").ConfigureAwait(false);
         }
     }
 }
