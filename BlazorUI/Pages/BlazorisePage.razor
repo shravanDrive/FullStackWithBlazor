@@ -1,8 +1,8 @@
 ﻿@page "/TestBlazorise"
-
+@inherits BlazorPageBase
     <Row>
         <Column>
-            <CardHeader Margin="Margin.Is4.OnY">
+            <Card Margin="Margin.Is4.OnY" Padding="Padding.Is2.OnY">
                 <CardHeader>
                     <CardTitle>Testing Blazorize Framework</CardTitle>
                 </CardHeader>
@@ -18,7 +18,22 @@
                         <TextEdit ChangeTextOnKeyPress="false" @bind-Text="dataforTextBox" />
                     </FieldLabel>
                 </CardBody>
-            </CardHeader>
+            </Card>
+        </Column>
+    </Row>
+    <Row>
+        <Column ColumnSize="ColumnSize.Is4.OnTablet.Is3.OnWidescreen.Is12.OnMobile">
+            <Card Margin="Margin.Is4.OnY">
+                <CardImage Source="assets/images/gallery/9.jpg" Alt="Placeholder image">
+                </CardImage>
+                <CardBody>
+                    <CardTitle Size="5">Card title</CardTitle>
+                    <CardText>
+                        Some quick example text to build on the card title and make up the bulk of the card's content.
+                    </CardText>
+                    <Button Color="Blazorise.Color.Primary" Clicked="@ButtonClick">Button</Button>
+                </CardBody>
+            </Card>
         </Column>
     </Row>
     @code {

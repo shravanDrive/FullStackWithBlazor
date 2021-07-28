@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Models.DataTransferModels;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Services.PropertyLookup.Models;
 using Services.PropertyLookup.Services;
 using System;
@@ -36,6 +38,22 @@ namespace Services.PropertyLookup.Controllers
         public async Task<SampleTable> GetDataById()
         {
             return await this.propertyLookupService.GetData().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// ParameterMethod
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ParameterMethod")]
+        public async Task<string> ParameterMethod(int orderId)
+        {
+            await Task.Delay(1).ConfigureAwait(false);
+            InterApiData interApiData = new InterApiData();
+            interApiData.Data = "Shravan";
+            var data = JsonConvert.SerializeObject(interApiData);
+            return data;
         }
 
         /// <summary>

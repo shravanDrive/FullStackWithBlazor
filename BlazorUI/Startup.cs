@@ -15,9 +15,12 @@ namespace BlazorUI
     using Blazorise.RichTextEdit;
     using BlazorUI.Data;
     using BlazorUI.Services;
+    using Common.Models.InterPageData;
+    using Connectors.RedisCache;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.AspNetCore.HttpsPolicy;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -57,6 +60,12 @@ namespace BlazorUI
             }).AddBootstrapProviders().AddFontAwesomeIcons();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
             services.AddSingleton<WeatherForecastService>();
+            services.AddAuthorization();
+            services.AddCustomCors();
+            services.AddCustomIntegrations(this.Configuration);
+
+            services.AddScoped<ICacheHelper, MemoryCacheHelper>();
+
             // services.AddSingleton<ICacheHelper, MemoryCacheHelper>(); Caching reference add arne nai ho raaha
         }
 
@@ -84,6 +93,52 @@ namespace BlazorUI
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+        }
+    }
+
+    /// <summary>
+    /// CustomExtensionMethods
+    /// </summary>
+    internal static partial class CustomExtensionMethods
+    {
+        public static IServiceCollection AddCustomCors(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "AllowAll",
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader());
+            });
+
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.RequireHeaderSymmetry = false;
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
+
+            return services;
+        }
+
+        /// <summary>
+        /// AddCustomIntegrations
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddCustomIntegrations(this IServiceCollection services, IConfiguration configuration)
+        {
+            // services.AddHttpClient<>().AddHttpMessageHandler<>();
+            services.AddHttpClient<IBlazorService, BlazorService>(client =>
+            {
+                client.BaseAddress = new Uri(configuration["ApiUrl:ServiceApi"].ToString());
+            });
+
+            services.AddScoped<InterpageData>();
+            return services;
         }
     }
 }

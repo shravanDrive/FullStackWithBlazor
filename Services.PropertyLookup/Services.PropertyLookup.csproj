@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common.Models\Common.Models.csproj" />
     <ProjectReference Include="..\Common.Repositories\Common.Repositories.csproj" />
     <ProjectReference Include="..\Connector.SignalR\Connector.SignalR.csproj" />
     <ProjectReference Include="..\Connectors.RedisCache\Connectors.RedisCache.csproj" />
