@@ -8,11 +8,11 @@
                 </CardHeader>
                 <CardBody>
                     @*Code For Spinner*@
-                    @*<div class="text-center" style="vertical-align:middle">
+                    <div class="text-center" style="vertical-align:middle">
                         <div class="spinner-border text-primary" rolse="status">
                             <span class="sr-only">Loading...</span>
                         </div>
-                    </div>*@
+                    </div>
                     <FieldLabel ColumnSize="ColumnSize.Is12.OnDesktop">
                         <FieldLabel>Testing Blazorise</FieldLabel>
                         <TextEdit ChangeTextOnKeyPress="false" @bind-Text="dataforTextBox" />
@@ -36,6 +36,18 @@
             </Card>
         </Column>
     </Row>
+    <Blazorise.Modal @ref="this.MacoRef" Closing="@OnModalClosing">
+        <ModalContent Style="width:80px; align-content:center" Centered="@true" Class="modal-dialog modal-dialog-centered">
+            <ModalBody MaxHeight="@this.maxheight">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </ModalBody>
+        </ModalContent>
+    </Blazorise.Modal>
     @code {
         string dataforTextBox = "Shravan";
+        private int? maxheight = 20;
     }
